@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SeasonSense Proposal</title>
+<style>
+  @page { size: A4; margin: 17mm 18mm 16mm 18mm; }
+  :root { --ink:#1b1b1b; --muted:#555; --accent:#1f5f3f; --rule:#c9d3cc; }
+  html, body { background:#fff; }
+  body { font-family: "Charter", "Georgia", serif; font-size: 10.3pt; line-height: 1.38; color: var(--ink); margin:0; }
+  h1 { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 17pt; margin: 0 0 2pt; color: var(--accent); letter-spacing: -0.2pt; }
+  .sub { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 9.6pt; color: var(--muted); margin-bottom: 8pt; }
+  .meta { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 8.8pt; border-top: 1.2pt solid var(--accent); border-bottom: 0.6pt solid var(--rule); padding: 4pt 0; margin-bottom: 9pt; display:flex; flex-wrap:wrap; gap: 3pt 18pt; }
+  .meta b { color: var(--accent); }
+  h2 { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 12.5pt; color: var(--accent); margin: 11pt 0 3pt; border-bottom: 0.6pt solid var(--rule); padding-bottom: 1.5pt; }
+  h3 { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 10.3pt; margin: 8pt 0 2pt; }
+  p { margin: 0 0 5pt; text-align: justify; hyphens: auto; }
+  ul { margin: 0 0 5pt 0; padding-left: 15pt; }
+  li { margin-bottom: 2pt; text-align: justify; }
+  table { border-collapse: collapse; width: 100%; font-size: 8.7pt; margin: 3pt 0 6pt; font-family: "Helvetica Neue", Arial, sans-serif; line-height: 1.25; }
+  th, td { border-bottom: 0.5pt solid var(--rule); padding: 2.2pt 4pt; text-align: left; vertical-align: top; }
+  th { background: #eef3ef; font-weight: 600; }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .cap { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 8.3pt; color: var(--muted); margin: -2pt 0 6pt; }
+  code { font-family: Menlo, monospace; font-size: 8.6pt; }
+  .refs { font-size: 8.4pt; line-height: 1.3; }
+  .refs li { margin-bottom: 1pt; text-align: left; }
+  .appendix { break-before: page; }
+  .links td { font-size: 9.5pt; }
+  .links a { color: var(--accent); word-break: break-all; }
+  img.shot { width: 100%; border: 0.6pt solid var(--rule); }
+</style>
+</head>
+<body>
+
+<h1>SeasonSense: Forecasting District Crop Yields in Rwanda from Survey and Weather Data</h1>
+<div class="sub">Project proposal · NISR 2026 Big Data Hackathon · Track 1: Agricultural Productivity</div>
+<div class="meta">
+  <span><b>Team:</b> Great Minds</span>
+  <span><b>Members:</b> Nick Singizwa (n.singizwa@alustudent.com) · David Shumbusho (d.shumbusho@alustudent.com)</span>
+  <span><b>Institution:</b> African Leadership University</span>
+</div>
+
+<h2>1. Introduction</h2>
+<h3>Background</h3>
+<p>Agriculture is still the livelihood of most Rwandan households, and almost all of it depends on rain. Farmers plant two main
+seasons a year: Season A (September to February) and Season B (February to July). The Second National Strategy for
+Transformation (NST2, 2024–2029) puts productivity at the centre of its agriculture pillar. It targets average agricultural
+growth above 6% a year and a productivity increase of more than 50% for the priority food crops (maize, beans, potatoes, rice
+and cassava). It also aims for self-sufficiency in maize, Irish potatoes and beans by 2029, and plans to raise irrigated land
+from about 71,500 ha to about 132,000 ha [1, 2]. To reach these targets, planners need to know <i>where</i> and
+<i>why</i> yields fall short.</p>
+<p>NISR's Seasonal Agricultural Survey (SAS) shows that the gaps are large and uneven. Our analysis of the published district tables
+for 2023A to 2026A finds the following [3]:</p>
+<ul>
+  <li><b>Large gaps between districts.</b> In Season 2026A, maize yields ranged from 1,278 to 2,887 kg/ha across districts
+  (2.3×). Irish potato yields ranged from 2,580 to 13,794 kg/ha (5.3×), and cassava from 5,458 to 16,622 kg/ha (3.0×).</li>
+  <li><b>Unstable yields from season to season.</b> Within the same district, the median coefficient of variation across the
+  seven seasons is 23% for maize and 24% for soybean. Bean and cassava yields vary by 10–11%.</li>
+  <li><b>Uneven input use.</b> In 2026A, the share of farmers applying inorganic fertiliser ranged from 34% to 90% across
+  districts, and pesticide use from 24% to 79%. District-level fertiliser adoption correlates only moderately with maize
+  yield (r = 0.36), which suggests that weather and other local factors explain much of the remaining gap.</li>
+  <li><b>Wide differences in seasonal weather.</b> In our ERA5 extraction, rainfall during the 22-week season windows ranged
+  from 234 mm to over 2,000 mm across districts and seasons. Season B is clearly drier (median 356 mm in 2024B, compared with
+  635 mm in 2024A).</li>
+</ul>
+<p><b>The problem.</b> SAS results are published only after harvest, and they report <i>what</i> happened, not what is likely to
+happen in the current season or why. District agronomists, RAB and MINAGRI programme officers, and food-security analysts
+(WFP, the CFSVA team) have to decide where to send fertiliser subsidies, extension visits and early food-security responses
+<i>during</i> the season, without a quantitative forecast. Smallholder households in high-variance districts are the most
+affected: a failed season lowers both their food supply and their income. <b>SeasonSense</b> addresses this gap. It is a model that
+forecasts each district-crop yield for the coming harvest from in-season weather and recorded farm practices, and its
+outputs can be reported as (a) an early warning of likely shortfalls against the district's normal yield and (b) an
+estimate of how much of that gap is linked to weather and how much to input adoption. Because the model is built only from
+NISR's own tables and free global weather data, NISR can update it every season at no cost.</p>
+
+<h2>2. Methodology</h2>
+<h3>2.1 Dataset</h3>
+<table>
+  <tr><th>Source</th><th>Content used</th><th>Granularity / size</th></tr>
+  <tr><td><b>NISR Seasonal Agricultural Survey</b>: SAS 2023, 2024 and 2025 annual tables; SAS 2026 Season A tables
+      (statistics.gov.rw) [3]</td>
+      <td>Average yield by crop and district (target); % of farmers using inorganic fertiliser, organic fertiliser, improved
+      seed, pesticides and erosion control (features)</td>
+      <td>30 districts × 17 crops × 7 seasons (2023A–2026A): <b>3,178</b> yield rows and 210 district-season practice records</td></tr>
+  <tr><td><b>ERA5 reanalysis</b> via the Open-Meteo archive API [4]</td>
+      <td>Daily rainfall, Tmax, Tmin and FAO-56 reference evapotranspiration (ET0); elevation</td>
+      <td>30 district centroids × 1,277 days (Sep 2022 to Feb 2026)</td></tr>
+  <tr><td><b>geoBoundaries</b> RWA ADM2 [5]</td><td>District polygons → centroids for the weather queries</td><td>30 polygons</td></tr>
+</table>
+<p><b>Why it fits.</b> The SAS is Rwanda's official source of crop statistics. It is based on an area frame of 1,200 sampled segments
+and reports results for every district and season, the same unit at which agricultural plans and subsidies are managed. A
+model trained on SAS yields therefore predicts NISR's own measure of productivity. Since most farms are rain-fed, weather
+during the season is the main reason the same district's yield changes from one season to the next. The farm-practice tables
+add the factors that policy can change. All sources are public and free, so the project is fully reproducible.</p>
+<p><b>Limitations and how we handle them.</b>
+(1) <i>Short history:</i> the district tables use the same format only for 2023A–2026A, which gives seven seasons. We therefore
+keep the model small (about 8.3k parameters), share information across crops and districts through embeddings, and use a
+strict temporal split (train 2023A–2025A, validate 2025B, test 2026A) so that no future season leaks into training. In the
+ML Pipeline phase we will add 2019–2022 SAS tables after harmonising their older layout.
+(2) <i>Aggregation and sampling error:</i> district averages hide differences between farms, and estimates for rare crops (e.g.
+wheat in 81 rows, groundnuts in 129) rest on few plots. A "–" in the tables means the crop was not measured, so we drop those
+cells rather than treating them as zero. We train with Huber loss, which limits the influence of noisy extreme values.
+(3) <i>Weather resolution:</i> ERA5 has a resolution of about 25 km and is known to misestimate rainfall over steep terrain such as the western highlands,
+and a single centroid may not represent the cropland of a whole district. We will test CHIRPS rainfall and
+cropland-weighted averages as replacements.
+(4) <i>Features not specific to crops:</i> the practice-adoption rates are given per district, not per crop, so the model learns
+their average association with yield. These are associations, and we will present them as such rather than as causal effects.
+(5) <i>Strong persistence:</i> a naive baseline that predicts each district-crop pair's past mean already reaches a validation MAPE
+of 15.4%. Most of the variation is therefore between districts and crops, and the model has to add value by predicting the
+season-to-season <i>deviation</i> from that mean. The baseline is logged to TensorBoard and is the benchmark the full model must beat.</p>
+
+<h3>2.2 Model architecture: SeasonSenseNet (GRU weather encoder + entity embeddings)</h3>
+<p>Each example is one (district, crop, season) and the target is the standardised log-yield. We model yield on the log scale
+because crop yields range from about 600 kg/ha (beans) to more than 13,000 kg/ha (cassava). On this scale, errors are relative
+and the effects of weather and inputs combine multiplicatively. The network has three branches whose outputs are concatenated:</p>
+<ul>
+  <li><b>Weather encoder (GRU, 32 hidden units).</b> Daily ERA5 data are aggregated into a 22-week sequence starting at the
+  beginning of the season, with six features per week: rainfall, mean Tmax, mean Tmin, total ET0, water balance (rain
+  − ET0) and number of dry days. The GRU reads the weeks in order, so it can learn <i>when</i> a stress occurred. For example,
+  a dry spell around flowering (weeks 8–12 for maize) causes more damage than the same deficit at planting. Because the GRU can
+  read a sequence that is shorter than the full season, the same model can produce a forecast in mid-season, which makes early
+  warning possible.</li>
+  <li><b>Entity embeddings</b> for district (30→6), crop (17→6) and season type (A/B→2). These learn a dense representation of
+  each district's agro-ecology and each crop's yield level and sensitivity. Crops that respond to weather in similar ways
+  (e.g. bush and climbing beans) get similar vectors, so rare crop-district pairs can borrow strength from common ones.</li>
+  <li><b>Static branch</b> (Linear 6→16, ReLU) for the adoption rates of inorganic and organic fertiliser, improved seed,
+  pesticides and erosion control, plus elevation.</li>
+</ul>
+<p>The concatenated 62-dimensional vector goes through an MLP head (64 units, ReLU, dropout 0.2) that outputs the predicted
+log-yield. Training uses Adam (lr 1e-3, weight decay 1e-4), Huber loss and gradient clipping.
+<b>Why this design and not the alternatives?</b>
+(a) <i>Gradient-boosted trees (XGBoost/LightGBM)</i> are the strongest standard choice for small tabular data, and we will use
+them as a benchmark. They need the season's weather summarised into fixed totals (e.g. seasonal rainfall), which loses the
+timing of stress. They cannot produce partial-season forecasts without a separate model for each forecast week, and they
+handle 30 districts × 17 crops as one-hot or target-encoded categories, which share less information than learned
+embeddings when there are about 2,250 training rows.
+(b) <i>A separate regression for each crop or district</i> would leave about 7 points per district-crop pair, far too few to
+estimate weather effects.
+(c) <i>LSTM or Transformer encoders</i> can model sequences but have more parameters. An LSTM has about 33% more parameters
+than a GRU of the same width, and self-attention needs much more data than seven seasons provide. A GRU gives the
+inductive bias of an ordered sequence at the lowest parameter cost, which is consistent with crop-yield studies that pair a
+recurrent weather encoder with management features [6, 7].
+The overall model is deliberately small (8,335 parameters) to limit overfitting on this dataset.</p>
+
+<h3>2.3 Implementation status</h3>
+<p>The full pipeline is implemented in PyTorch in one notebook (<code>nisr_yield_pipeline.ipynb</code>, link in the Appendix). It
+has 11 commented sections: set-up, data download, parsing of the SAS Excel tables, weather retrieval, weekly sequence
+building, the feature table and temporal split, the Dataset and DataLoaders, the model, the training and evaluation functions,
+the TensorBoard placeholder run, and 2026A inference. The notebook runs from raw NISR Excel files to a 2026A forecast CSV in
+about one minute on a laptop CPU. As required at this stage, the model was trained for <b>one epoch only</b> (71 mini-batches). Within that
+epoch the batch training loss fell from about 0.50 to about 0.25, validation Huber loss fell from 0.51 to 0.29, and validation R²
+on the log scale rose from −0.03 (untrained) to 0.41.
+Validation MAPE fell from 192% to 105%, which is still far worse than the 15% baseline. This is expected for an untrained model, and these are
+<b>placeholder numbers, not results</b>. Full training, tuning and benchmarking against the baseline and LightGBM will follow in
+ML Pipeline.</p>
+
+<h3>2.4 TensorBoard</h3>
+<p>A <code>SummaryWriter</code> logs each run to a time-stamped directory under <code>runs/</code>. Beyond loss and accuracy-type
+metrics, it records: the loss and gradient norm of every batch; epoch-level training and validation loss; validation MAPE,
+median APE, RMSE and R² on the log scale; the same metrics for the naive baseline; validation MAPE for each crop (17 curves);
+learning rate; weight histograms; the model's computation graph (<code>add_graph</code>); the full configuration as text; and the
+hyperparameters with their final metrics in the HParams tab. A screenshot of the Scalars tab for this placeholder run is in the
+Appendix.</p>
+
+<div class="refs">
+<h3>References</h3>
+<ol>
+  <li>KT Press (2024). <i>Rwanda to satisfy local market demand for maize, Irish potatoes and beans before 2029</i>; The New Times (2024). <i>Minister Uwituze talks plan to raise food crop productivity by 50%</i>.</li>
+  <li>KT Press (Feb 2026). <i>New irrigation financing aims to improve food security</i>.</li>
+  <li>NISR. <i>Seasonal Agricultural Survey</i>: 2023, 2024 and 2025 Annual Tables; 2026 Season A Tables. statistics.gov.rw.</li>
+  <li>Hersbach, H. et al. (2020). The ERA5 global reanalysis. <i>Q. J. R. Meteorol. Soc.</i> 146; Open-Meteo Historical Weather API.</li>
+  <li>Runfola, D. et al. (2020). geoBoundaries: A global database of political administrative boundaries. <i>PLoS ONE</i> 15(4).</li>
+  <li>Khaki, S., Wang, L. &amp; Archontoulis, S. (2020). A CNN-RNN framework for crop yield prediction. <i>Frontiers in Plant Science</i> 10.</li>
+  <li>You, J. et al. (2017). Deep Gaussian process for crop yield prediction based on remote sensing data. <i>AAAI</i>; Guo, C. &amp; Berkhahn, F. (2016). Entity embeddings of categorical variables. arXiv:1604.06737.</li>
+</ol>
+</div>
+
+<div class="appendix">
+<h2>Appendix</h2>
+<table class="links">
+  <tr><th style="width:28%">Item</th><th>Link</th></tr>
+  <tr><td>Code (GitHub)</td><td><a href="{{REPO_URL}}">{{REPO_URL}}</a></td></tr>
+  <tr><td>Loom registration recording</td><td><a href="https://www.loom.com/share/f86209e28d1a4124a70b1acc07328ebc">https://www.loom.com/share/f86209e28d1a4124a70b1acc07328ebc</a></td></tr>
+</table>
+<h3>TensorBoard: Scalars tab, placeholder run (1 epoch)</h3>
+<img class="shot" src="../figures/tb_scalars.png" alt="TensorBoard scalars">
+<p class="cap">Top row: per-batch training loss over the 71 steps of the single epoch, epoch training loss, and validation MAPE (%). Bottom row: validation R², RMSE
+(log scale) and Huber loss, at step 0 (untrained) and step 1 (after one epoch). Smoothing is 0.6; the faint line shows the raw values.</p>
+</div>
+
+</body>
+</html>
